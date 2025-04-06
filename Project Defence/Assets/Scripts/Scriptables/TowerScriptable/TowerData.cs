@@ -1,0 +1,18 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Sirenix.OdinInspector;
+
+namespace Scriptables.Towers
+{
+    public class TowerData : SerializedScriptableObject
+    {
+        public GameObject towerPrefab;
+        public int range;
+        public int level;
+        public int towerSize;
+    }
+
+}
+
+

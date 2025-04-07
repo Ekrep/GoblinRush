@@ -40,18 +40,18 @@ public class GridMap : SerializedMonoBehaviour
         Debug.Log(TilePositionToWorldPosition(new Vector2Int(3, 3)));
         Debug.Log(WorldPositionToTilePosition(new Vector3(13.5f, 0, 24f)));
         #region TestStuff
-        // currentTileMap[3, 3].SetTileBlockStatus(true);
-        // currentTileMap[0, 1].SetTileBlockStatus(true);
-        // currentTileMap[1, 1].SetTileBlockStatus(true);
-        // currentTileMap[3, 2].SetTileBlockStatus(true);
-        // currentTileMap[2, 3].SetTileBlockStatus(true);
-        // currentTileMap[3, 4].SetTileBlockStatus(true);
-        // currentTileMap[4, 3].SetTileBlockStatus(true);
-        // path = PathFinder.CalculateUntillFindClosestAvailablePath(currentTileMap, new Vector2Int(0, 0), new Vector2Int(3, 3));
-        // for (int i = 0; i < path.Length; i++)
-        // {
-        //     currentTileMap[path[i].x, path[i].y].tileRenderer.material.color = Color.red;
-        // }
+        currentTileMap[3, 3].SetTileBlockStatus(true);
+        currentTileMap[0, 1].SetTileBlockStatus(true);
+        currentTileMap[1, 1].SetTileBlockStatus(true);
+        currentTileMap[3, 2].SetTileBlockStatus(true);
+        currentTileMap[2, 3].SetTileBlockStatus(true);
+        currentTileMap[3, 4].SetTileBlockStatus(true);
+        currentTileMap[4, 3].SetTileBlockStatus(true);
+        path = PathFinder.CalculateUntillFindClosestAvailablePath(currentTileMap, new Vector2Int(0, 0), new Vector2Int(3, 3));
+        for (int i = 0; i < path.Length; i++)
+        {
+            currentTileMap[path[i].x, path[i].y].tileRenderer.material.color = Color.red;
+        }
         #endregion
     }
     void Update()

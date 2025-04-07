@@ -8,27 +8,29 @@ public abstract class Tower : BoundableProbe
 {
     [SerializeField] protected TowerData towerData;
     public TowerData TowerData => towerData;
+    protected List<BaseTile> tilesInRange;
     private Vector2Int towerPivotPoint;
     public abstract void UnboundFromTileProcess();
     public virtual void Initialize(Vector2Int[] occupiedTilePositions, Vector2Int towerPivotPoint)
     {
         OccupyTile(occupiedTilePositions);
+        tilesInRange=GetTilesInRange();
     }
 
     public override void OnUnbound()
     {
         UnboundFromTileProcess();
     }
-    protected BaseTile[] GetTilesInRange()
+    protected List<BaseTile> GetTilesInRange()
     {
         GroundTile pivotTile = GridMap.Instance.GetTileByGridPos(towerPivotPoint);
-        BaseTile[] tilesInRange = new BaseTile[towerData.range * 8];
+        List<BaseTile> tilesInRange = new List<BaseTile>();
         for (int i = 1; i < towerData.range; i++)
         {
             BaseTile[] holderArray = PathFinder.GetEightAxisNeighbors(pivotTile, GridMap.Instance.CurrentTileMap, i);
             for (int j = 0; j < holderArray.Length; j++)
             {
-                tilesInRange.Append(holderArray[j]);
+                tilesInRange.Add(holderArray[j]);
             }
         }
         return tilesInRange;

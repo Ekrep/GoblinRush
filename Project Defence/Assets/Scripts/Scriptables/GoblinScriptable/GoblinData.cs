@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Scriptables.UnitData;
-using static Utils.Utils;
+using static StaticHelpers.Util.Utils;
 
 namespace Scriptables.UnitData.GoblinData
 {

@@ -1,0 +1,4 @@
+========================IMPORTANT============================
+even buildings are like 2x2 or 4x4  pivot point must be leftdown corner to fit tilemap correctly.(It's important when creating mesh)!!
+odd building like are 3x3 or 5x5 pivot point must be center!!
+===============================================================

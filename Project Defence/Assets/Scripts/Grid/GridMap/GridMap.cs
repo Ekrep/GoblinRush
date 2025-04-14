@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using StaticHelpers.PathFinder;
+using StaticHelpers.Random;
 
 public class GridMap : SerializedMonoBehaviour
 {
@@ -73,6 +75,7 @@ public class GridMap : SerializedMonoBehaviour
     }
     public GroundTile GetTileByWorldPos(Vector3 tileWorldPos)
     {
+        //check later
         Vector2Int gridPos = new Vector2Int((int)(tileWorldPos.x / cellXOffset), (int)(tileWorldPos.z / cellZOffset));
         return currentTileMap[gridPos.x, gridPos.y];
 

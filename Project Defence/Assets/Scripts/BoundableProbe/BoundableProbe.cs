@@ -4,10 +4,16 @@ using UnityEngine;
 
 public abstract class BoundableProbe : MonoBehaviour
 {
+    public BoundableData boundableData;
+    public MeshFilter meshFilter;
+    public Vector2Int probePivotPoint;
+    public List<GroundTile> boundedTiles;
+
     public abstract void OnUnbound();
-    public void Bound(GroundTile tile, bool canBlockTile)
+    private void Bound(GroundTile tile, bool canBlockTile)
     {
         tile.BoundTheBoundable(this, canBlockTile);
+        boundedTiles.Add(tile);
     }
     public void OccupyTile(Vector2Int tilePos)
     {

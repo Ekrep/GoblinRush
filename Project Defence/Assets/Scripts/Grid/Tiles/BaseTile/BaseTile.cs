@@ -44,7 +44,10 @@ public class BaseTile : MonoBehaviour
     }
     public void UnboundTheBoundable()
     {
-        boundableProbe.OnUnbound();
+        if (boundableProbe != null)
+        {
+            boundableProbe.OnUnbound();
+        }
         boundableProbe = null;
         isOccupied = false;
         SetTileBlockStatus(false);

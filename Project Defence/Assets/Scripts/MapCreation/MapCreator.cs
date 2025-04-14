@@ -1,28 +1,190 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using Scriptables.MapCreation.MapData;
-public class MapCreator : MonoBehaviour
+using static StaticHelpers.MapCreationUtils.MapCreationUtils;
+using Sirenix.OdinInspector;
+using System.Linq;
+using StaticHelpers.Convertor;
+
+[ExecuteInEditMode]
+public class MapCreator : SerializedMonoBehaviour
 {
+    public bool enable;
     public MapData mapData;
+    public MapProbesData mapProbesData;
     public float cellXOffset;
     public float cellZOffset;
     public Vector3 tileScale;
+    public GroundTile currentGroundTilePrefab;
+    public BoundableProbe currentBoundableProbePrefab;
+    public MapCreatorMode creationMode;
+    public Dictionary<Vector2Int, GroundTile> tileMap;
+    public List<BoundedBoundableData> boundedBoundableDatas;
 
-    private void Update()
+    public List<Vector2Int> testList;
+
+    private Vector3 mouseWorldPos;
+    private Plane ground;
+
+    void OnEnable()
     {
+        SceneView.duringSceneGui += OnSceneGUI;
+        ground = new Plane(Vector3.up, Vector3.zero);
+    }
+    void OnDisable()
+    {
+        SceneView.duringSceneGui -= OnSceneGUI;
+    }
+    void OnValidate()
+    {
+    }
+    void Update()
+    {
+        Debug.Log(PositionConvertor.WorldPositionToTilePosition(mouseWorldPos, new Vector2(cellXOffset, cellZOffset)));
+    }
+    private void OnSceneGUI(SceneView sceneView)
+    {
+        if (!enable) return;
+        Event e = Event.current;
+        Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+        ground.Raycast(ray, out float enterX);
+        mouseWorldPos = ray.GetPoint(enterX);
+        if (e.type == EventType.MouseDown && e.button == 0 && !e.alt)
+        {
+            //Plane ground = new Plane(Vector3.up, Vector3.zero);
+            if (ground.Raycast(ray, out float enter))
+            {
+                Vector3 worldPos = ray.GetPoint(enter);
+                Vector2Int tileMapPos = PositionConvertor.WorldPositionToTilePosition(worldPos, new Vector2(cellXOffset, cellZOffset));
+                Vector3 snappedPos;
+                switch (creationMode)
+                {
+                    case MapCreatorMode.TileMode:
+                        snappedPos = PositionConvertor.TilePositionToWorldPosition(tileMapPos, new Vector2(cellXOffset, cellZOffset));
+                        if (currentGroundTilePrefab != null && tileMapPos.x >= 0 && tileMapPos.y >= 0 && !tileMap.ContainsKey(tileMapPos))
+                        {
+                            GroundTile newTile = PrefabUtility.InstantiatePrefab(currentGroundTilePrefab) as GroundTile;
+                            newTile.gameObject.transform.position = snappedPos;
+                            newTile.gridPosition = tileMapPos;
+                            tileMap.TryAdd(tileMapPos, newTile);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Tile prefab not found or position not valid");
+                        }
+                        break;
+                    case MapCreatorMode.BuildingMode:
+                        snappedPos = PositionConvertor.TilePositionToWorldPosition(tileMapPos, new Vector2(cellXOffset, cellZOffset));
+                        if (currentBoundableProbePrefab != null && tileMap.ContainsKey(tileMapPos))
+                        {
+                            testList = CalculateBoundablesTilemapPos(tileMapPos, currentBoundableProbePrefab.boundableData);
+                            List<Vector2Int> boundPositions = testList;
+                            if (boundPositions != null)
+                            {
+                                BoundableProbe boundableProbe = PrefabUtility.InstantiatePrefab(currentBoundableProbePrefab) as BoundableProbe;
+                                boundableProbe.transform.position = new Vector3(snappedPos.x, currentBoundableProbePrefab.boundableData.height, snappedPos.z);
+                                boundedBoundableDatas.Add(new BoundedBoundableData(currentBoundableProbePrefab, boundPositions.ToArray()));
+                                for (int i = 0; i < boundPositions.Count; i++)
+                                {
+                                    tileMap[boundPositions[i]].BoundTheBoundable(boundableProbe, currentBoundableProbePrefab.boundableData.canBlockTile);
+                                }
+
+                            }
+
+
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Error on Boundable Placing");
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+            e.Use();
+        }
+    }
+    void OnDrawGizmos()
+    {
+        if (!enable) return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(new Vector3(499f, 0, -1f), new Vector3(1000, 0, 0));
+        Gizmos.DrawWireCube(new Vector3(-1f, 0, 499f), new Vector3(0, 0, 1000));
+        switch (creationMode)
+        {
+            case MapCreatorMode.TileMode:
+                Gizmos.color = Color.white;
+                Vector2Int tileMapPos = PositionConvertor.WorldPositionToTilePosition(mouseWorldPos, new Vector2(cellXOffset, cellZOffset));
+                Vector3 snappedPos = PositionConvertor.TilePositionToWorldPosition(tileMapPos, new Vector2(cellXOffset, cellZOffset));
+                Gizmos.DrawWireMesh(currentGroundTilePrefab.tileFilter.sharedMesh, snappedPos, Quaternion.identity, tileScale);
+                break;
+            case MapCreatorMode.BuildingMode:
+                Gizmos.color = Color.white;
+                tileMapPos = PositionConvertor.WorldPositionToTilePosition(mouseWorldPos, new Vector2(cellXOffset, cellZOffset));
+                snappedPos = PositionConvertor.TilePositionToWorldPosition(tileMapPos, new Vector2(cellXOffset, cellZOffset));
+                List<Vector2Int> list = CalculateBoundablesTilemapPos(tileMapPos, currentBoundableProbePrefab.boundableData);
+                if (list != null)
+                {
+                    Gizmos.color = Color.green;
+                }
+                else
+                {
+                    Gizmos.color = Color.red;
+                }
+                Gizmos.DrawWireMesh(currentBoundableProbePrefab.meshFilter.sharedMesh, new Vector3(snappedPos.x, currentBoundableProbePrefab.boundableData.height, snappedPos.z), Quaternion.identity, tileScale);
+                break;
+            default:
+                break;
+        }
+    }
+    [ContextMenu("Clear All Tile Boundables")]
+    public void ClearAllTileBoundables()
+    {
+        for (int i = 0; i < tileMap.Count; i++)
+        {
+            tileMap.ElementAt(i).Value.UnboundTheBoundable();
+        }
+        boundedBoundableDatas.Clear();
 
     }
-
-    private Vector3 GetMouseScreenPosToWorldPos()
+    [ContextMenu("Save Map Data")]
+    public void SaveMapData()
     {
-        Vector3 mousePos = Input.mousePosition;
-        return Camera.main.ScreenToWorldPoint(mousePos);
+        //mapData.Save(tileMap.Keys.ToArray(),cellXOffset,cellZOffset,tileScale,)
     }
-    private Vector2Int ConvertWorldMousePositionToTilePosition(Vector3 mouseWorldPos)
-    {
-        return PositionConvertor.WorldPositionToTilePosition(mouseWorldPos, new Vector2(cellXOffset, cellZOffset));
 
+    //based on every boundables pivot point is same, idea
+    private List<Vector2Int> CalculateBoundablesTilemapPos(Vector2Int mouseCurrentTilePos, BoundableData boundableData)
+    {
+        List<Vector2Int> points = new List<Vector2Int>();
+        Vector2Int startPoint = mouseCurrentTilePos;
+        int layer = 0;
+        if (!tileMap.ContainsKey(startPoint))
+        {
+            return null;
+        }
+        while (layer < boundableData.size)
+        {
+            for (int i = 0; i < boundableData.size; i++)
+            {
+                Vector2Int pos = new Vector2Int(startPoint.x + 1 * i, startPoint.y);
+                if (tileMap.ContainsKey(pos) && (!tileMap[pos].IsBlocked || !tileMap[pos].IsOccupied))
+                {
+                    points.Add(pos);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            startPoint = new Vector2Int(startPoint.x, startPoint.y - 1);
+            layer++;
+        }
+        return points;
     }
 
 }

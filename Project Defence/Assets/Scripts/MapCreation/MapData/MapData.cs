@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using static StaticHelpers.MapCreationUtils.MapCreationUtils;
 
 namespace Scriptables.MapCreation.MapData
 {
@@ -9,11 +10,21 @@ namespace Scriptables.MapCreation.MapData
     public class MapData : SerializedScriptableObject
     {
         [Header("Tile Values")]
-        public Vector2Int[,] tilePositions;
+        public Vector2Int[] tilePositions;
         public float cellXOffset;
         public float cellZOffset;
         public Vector3 tileScale;
         [Header("Boundable Object Values")]
-        public Dictionary<Vector2Int, BoundableProbe> boundables;
+        public BoundedBoundableData[] boundedBoundableDatas;
+
+        public void Save(Vector2Int[] tilePositions, float cellXOffset, float cellZOffset, Vector3 tileScale, BoundedBoundableData[] boundables)
+        {
+            this.tilePositions = tilePositions;
+            this.cellXOffset = cellXOffset;
+            this.cellZOffset = cellZOffset;
+            this.tileScale = tileScale;
+            boundedBoundableDatas = boundables;
+
+        }
     }
 }

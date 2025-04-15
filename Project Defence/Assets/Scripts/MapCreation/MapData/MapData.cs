@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using static StaticHelpers.MapCreationUtils.MapCreationUtils;
+using UnityEditor;
 
 namespace Scriptables.MapCreation.MapData
 {
@@ -24,7 +25,12 @@ namespace Scriptables.MapCreation.MapData
             this.cellZOffset = cellZOffset;
             this.tileScale = tileScale;
             boundedBoundableDatas = boundables;
-
+            if (!EditorUtility.IsDirty(this))
+            {
+                EditorUtility.SetDirty(this);
+            }
+            AssetDatabase.SaveAssetIfDirty(this);
+            AssetDatabase.SaveAssets();
         }
     }
 }

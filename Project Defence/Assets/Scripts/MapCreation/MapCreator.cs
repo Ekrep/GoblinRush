@@ -84,8 +84,9 @@ public class MapCreator : SerializedMonoBehaviour
                             if (boundPositions != null)
                             {
                                 BoundableProbe boundableProbe = PrefabUtility.InstantiatePrefab(currentBoundableProbePrefab) as BoundableProbe;
-                                boundableProbe.transform.position = new Vector3(snappedPos.x, currentBoundableProbePrefab.boundableData.height, snappedPos.z);
-                                boundedBoundableDatas.Add(new BoundedBoundableData(currentBoundableProbePrefab, boundPositions.ToArray()));
+                                Vector3 snappedWorldPos = new Vector3(snappedPos.x, currentBoundableProbePrefab.boundableData.height, snappedPos.z);
+                                boundableProbe.transform.position = snappedWorldPos;
+                                boundedBoundableDatas.Add(new BoundedBoundableData(currentBoundableProbePrefab, boundPositions.ToArray(), snappedWorldPos));
                                 for (int i = 0; i < boundPositions.Count; i++)
                                 {
                                     tileMap[boundPositions[i]].BoundTheBoundable(boundableProbe, currentBoundableProbePrefab.boundableData.canBlockTile);
@@ -154,7 +155,7 @@ public class MapCreator : SerializedMonoBehaviour
     [ContextMenu("Save Map Data")]
     public void SaveMapData()
     {
-        //mapData.Save(tileMap.Keys.ToArray(),cellXOffset,cellZOffset,tileScale,)
+        mapData.Save(tileMap.Keys.ToArray(), cellXOffset, cellZOffset, tileScale, boundedBoundableDatas.ToArray());
     }
 
     //based on every boundables pivot point is same, idea

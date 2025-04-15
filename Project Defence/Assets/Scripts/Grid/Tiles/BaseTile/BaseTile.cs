@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BaseTile : MonoBehaviour
 {
-    protected BoundableProbe boundableProbe;
+    [SerializeField]protected BoundableProbe boundableProbe;
     public BoundableProbe BoundableProbe => boundableProbe;
     [SerializeField] protected bool isBlocked;
     public bool IsBlocked => isBlocked;

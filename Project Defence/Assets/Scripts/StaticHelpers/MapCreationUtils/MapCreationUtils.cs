@@ -20,12 +20,15 @@ namespace StaticHelpers.MapCreationUtils
         {
             private BoundableProbe probe;
             public BoundableProbe Probe => probe;
-            private Vector2Int[] boundedPositions;
-            public Vector2Int[] BoundedPositions => boundedPositions;
-            public BoundedBoundableData(BoundableProbe probe, Vector2Int[] boundedPositions)
+            private Vector3 boundedWorldPosition;
+            public Vector3 BoundedWorldPosition=>boundedWorldPosition;
+            private Vector2Int[] boundedTilePositions;
+            public Vector2Int[] BoundedTilePositions => boundedTilePositions;
+            public BoundedBoundableData(BoundableProbe probe, Vector2Int[] boundedTilePositions, Vector3 boundedWorldPosition)
             {
                 this.probe = probe;
-                this.boundedPositions = boundedPositions;
+                this.boundedTilePositions = boundedTilePositions;
+                this.boundedWorldPosition = boundedWorldPosition;
             }
 
         }

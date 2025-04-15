@@ -468,11 +468,12 @@ MonoBehaviour:
     - Name: testDict
       Entry: 6
       Data: 
+  data: {fileID: 11400000, guid: d378b7913b52e3f4e8c2ba0678bfa014, type: 2}
   gridSizeX: 9
   gridSizeZ: 9
-  tileScale: {x: 3, y: 3, z: 3}
-  cellXOffset: 3
-  cellZOffset: 3
+  tileScale: {x: 1, y: 1, z: 1}
+  cellXOffset: 1
+  cellZOffset: 1
   tilePrefab: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
     type: 3}
   path: []

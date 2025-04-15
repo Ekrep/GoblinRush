@@ -4,11 +4,13 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using StaticHelpers.PathFinder;
 using StaticHelpers.Random;
+using Scriptables.MapCreation.MapData;
 
 public class GridMap : SerializedMonoBehaviour
 {
     private static GridMap instance;
     public static GridMap Instance => instance;
+    public MapData data;
     private GridCell[,] cells;//deprecated remove it!!
     private GroundTile[,] currentTileMap;
     public GroundTile[,] CurrentTileMap => currentTileMap;
@@ -36,24 +38,25 @@ public class GridMap : SerializedMonoBehaviour
     }
     void Start()
     {
-        InitializeTileArray();
-        CreateGridCells();
-        CreateVisual();
-        Debug.Log(TilePositionToWorldPosition(new Vector2Int(3, 3)));
-        Debug.Log(WorldPositionToTilePosition(new Vector3(13.5f, 0, 24f)));
+        InitializeMap(data);
+        // InitializeTileArray();
+        // CreateGridCells();
+        // CreateVisual();
+        // Debug.Log(TilePositionToWorldPosition(new Vector2Int(3, 3)));
+        // Debug.Log(WorldPositionToTilePosition(new Vector3(13.5f, 0, 24f)));
         #region TestStuff
-        currentTileMap[3, 3].SetTileBlockStatus(true);
-        currentTileMap[0, 1].SetTileBlockStatus(true);
-        currentTileMap[1, 1].SetTileBlockStatus(true);
-        currentTileMap[3, 2].SetTileBlockStatus(true);
-        currentTileMap[2, 3].SetTileBlockStatus(true);
-        currentTileMap[3, 4].SetTileBlockStatus(true);
-        currentTileMap[4, 3].SetTileBlockStatus(true);
-        path = PathFinder.CalculateUntillFindClosestAvailablePath(currentTileMap, new Vector2Int(0, 0), new Vector2Int(3, 3));
-        for (int i = 0; i < path.Length; i++)
-        {
-            currentTileMap[path[i].x, path[i].y].tileRenderer.material.color = Color.red;
-        }
+        // currentTileMap[3, 3].SetTileBlockStatus(true);
+        // currentTileMap[0, 1].SetTileBlockStatus(true);
+        // currentTileMap[1, 1].SetTileBlockStatus(true);
+        // currentTileMap[3, 2].SetTileBlockStatus(true);
+        // currentTileMap[2, 3].SetTileBlockStatus(true);
+        // currentTileMap[3, 4].SetTileBlockStatus(true);
+        // currentTileMap[4, 3].SetTileBlockStatus(true);
+        // path = PathFinder.CalculateUntillFindClosestAvailablePath(currentTileMap, new Vector2Int(0, 0), new Vector2Int(3, 3));
+        // for (int i = 0; i < path.Length; i++)
+        // {
+        //     currentTileMap[path[i].x, path[i].y].tileRenderer.material.color = Color.red;
+        // }
         #endregion
     }
     void Update()
@@ -101,6 +104,34 @@ public class GridMap : SerializedMonoBehaviour
         RandomTable.GetRandomFloatBetweenMinusOneToOne() * tileZScaleRatio);
         return position;
 
+    }
+    private void InitializeMap(MapData mapData)
+    {
+        //  InitializeTileArray();
+        // CreateGridCells();
+        // CreateVisual();
+        currentTileMap = new GroundTile[mapData.tilePositions.Length, mapData.tilePositions.Length];
+        cellXOffset = mapData.cellXOffset;
+        cellZOffset = mapData.cellZOffset;
+        tileScale = mapData.tileScale;
+        for (int i = 0; i < mapData.tilePositions.Length; i++)
+        {
+            GroundTile groundTile = Instantiate(tilePrefab);
+            currentTileMap[mapData.tilePositions[i].x, mapData.tilePositions[i].y] = groundTile;
+            groundTile.SetGridPosition(new Vector2Int(mapData.tilePositions[i].x, mapData.tilePositions[i].y));
+            groundTile.SetWorldPosition(new Vector3(mapData.tilePositions[i].x * cellXOffset, 0, mapData.tilePositions[i].y * cellZOffset));
+        }
+        for (int i = 0; i < mapData.boundedBoundableDatas.Length; i++)
+        {
+            BoundableProbe probe = Instantiate(mapData.boundedBoundableDatas[i].Probe);
+            probe.transform.position = mapData.boundedBoundableDatas[i].BoundedWorldPosition;
+            probe.OccupyTile(mapData.boundedBoundableDatas[i].BoundedTilePositions);
+        }
+        Vector2Int[] path = PathFinder.CalculateUntillFindClosestAvailablePath(currentTileMap, new Vector2Int(1, 0), new Vector2Int(3, 4));
+        for (int i = 0; i < path.Length; i++)
+        {
+            GetTileByGridPos(path[i]).tileRenderer.material.color = Color.red;
+        }
     }
     private void InitializeTileArray()
     {

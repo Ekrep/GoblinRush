@@ -16,12 +16,12 @@ namespace StaticHelpers.PathFinder
             {
                 openList.Sort((a, b) => a.f.CompareTo(b.f));
                 GroundTile current = openList[0];
-                if (current.gridPosition == endPoint)
+                if (current.GridPosition == endPoint)
                 {
                     List<Vector2Int> path = new List<Vector2Int>();
                     while (current != null)
                     {
-                        path.Add(current.gridPosition);
+                        path.Add(current.GridPosition);
                         current = current.parent;
                     }
                     path.Reverse();
@@ -31,7 +31,7 @@ namespace StaticHelpers.PathFinder
                 closedList.Add(current);
                 foreach (var neighbor in GetFourAxisNeighbors(current, tileMap, 1))
                 {
-                    if (closedList.Contains(neighbor) || neighbor == null || IsTilemapPositionBlocked(neighbor.gridPosition, tileMap))
+                    if (closedList.Contains(neighbor) || neighbor == null || IsTilemapPositionBlocked(neighbor.GridPosition, tileMap))
                         continue;
 
                     int tentativeG = current.g + 1;
@@ -59,12 +59,12 @@ namespace StaticHelpers.PathFinder
             {
                 openList.Sort((a, b) => a.f.CompareTo(b.f));
                 GroundTile current = openList[0];
-                if (current.gridPosition == endPoint)
+                if (current.GridPosition == endPoint)
                 {
                     List<Vector2Int> path = new List<Vector2Int>();
                     while (current != null)
                     {
-                        path.Add(current.gridPosition);
+                        path.Add(current.GridPosition);
                         current = current.parent;
                     }
                     path.Reverse();
@@ -106,12 +106,12 @@ namespace StaticHelpers.PathFinder
             {
                 openList.Sort((a, b) => a.f.CompareTo(b.f));
                 GroundTile current = openList[0];
-                if (current.gridPosition == endPoint)
+                if (current.GridPosition == endPoint)
                 {
                     List<Vector2Int> path = new List<Vector2Int>();
                     while (current != null)
                     {
-                        path.Add(current.gridPosition);
+                        path.Add(current.GridPosition);
                         current = current.parent;
                     }
                     path.Reverse();
@@ -121,7 +121,7 @@ namespace StaticHelpers.PathFinder
                 closedList.Add(current);
                 foreach (var neighbor in GetFourAxisNeighbors(current, tileMap, 1))
                 {
-                    if (closedList.Contains(neighbor) || neighbor == null || IsTilemapPositionBlocked(neighbor.gridPosition, tileMap))
+                    if (closedList.Contains(neighbor) || neighbor == null || IsTilemapPositionBlocked(neighbor.GridPosition, tileMap))
                         continue;
 
                     int tentativeG = current.g + 1;
@@ -147,7 +147,7 @@ namespace StaticHelpers.PathFinder
             int[] dy = { 1, -1, 0, 0 };// i mean z axis because 3d represent.
             for (int i = 0; i < 4; i++)
             {
-                Vector2Int newPos = new Vector2Int(tile.gridPosition.x + dx[i] * layer, tile.gridPosition.y + dy[i] * layer);
+                Vector2Int newPos = new Vector2Int(tile.GridPosition.x + dx[i] * layer, tile.GridPosition.y + dy[i] * layer);
                 if (IsPositionInTileMapBounds(new Vector2Int(newPos.x, newPos.y), tileMap))//check is groundTileValid
                 {
                     neighbors[i] = tileMap[newPos.x, newPos.y];
@@ -189,7 +189,7 @@ namespace StaticHelpers.PathFinder
             int[] dy = { 1, -1, 0, 0, 1, -1, -1, 1 };// i mean z axis because 3d represent.
             for (int i = 0; i < 8; i++)
             {
-                Vector2Int newPos = new Vector2Int(tile.gridPosition.x + dx[i] * layer, tile.gridPosition.y + dy[i] * layer);
+                Vector2Int newPos = new Vector2Int(tile.GridPosition.x + dx[i] * layer, tile.GridPosition.y + dy[i] * layer);
                 if (IsPositionInTileMapBounds(new Vector2Int(newPos.x, newPos.y), tileMap))//check is groundTileValid
                 {
                     neighbors[i] = tileMap[newPos.x, newPos.y];
@@ -222,7 +222,7 @@ namespace StaticHelpers.PathFinder
         }
         private static int CalculateH(GroundTile firstTile, GroundTile secondTile)
         {
-            return Mathf.Abs(firstTile.gridPosition.x - secondTile.gridPosition.x) + Mathf.Abs(firstTile.gridPosition.y - secondTile.gridPosition.y);
+            return Mathf.Abs(firstTile.GridPosition.x - secondTile.GridPosition.x) + Mathf.Abs(firstTile.GridPosition.y - secondTile.GridPosition.y);
         }
         private static Vector2Int FindAvailableClosestTilePos(Vector2Int startPoint, Vector2Int endPoint, GroundTile[,] tileMap)
         {
@@ -237,7 +237,7 @@ namespace StaticHelpers.PathFinder
                 availableClosestNeighbor = GetClosestAvailableNeighborTileToStartPoint(startPoint, neighborCalculationResult);
                 if (availableClosestNeighbor != null)
                 {
-                    return availableClosestNeighbor.gridPosition;
+                    return availableClosestNeighbor.GridPosition;
                 }
                 multiplier++;
             }
@@ -253,7 +253,7 @@ namespace StaticHelpers.PathFinder
             {
                 if (neighborTiles[i] == null || neighborTiles[i].IsBlocked)//check blockedStatus
                     continue;
-                calculatedDistance = Vector2Int.Distance(startPoint, neighborTiles[i].gridPosition);
+                calculatedDistance = Vector2Int.Distance(startPoint, neighborTiles[i].GridPosition);
                 if (calculatedDistance < smallestDistance)
                 {
                     smallestDistance = calculatedDistance;

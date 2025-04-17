@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class BaseTile : MonoBehaviour
 {
-    [SerializeField]protected BoundableProbe boundableProbe;
+    [SerializeField] protected BoundableProbe boundableProbe;
     public BoundableProbe BoundableProbe => boundableProbe;
     [SerializeField] protected bool isBlocked;
     public bool IsBlocked => isBlocked;
     protected bool isOccupied;
     public bool IsOccupied => isOccupied;
-    public Vector2Int gridPosition;
-    public Vector3 worldPosition;
+    protected Vector2Int gridPosition;
+    public Vector2Int GridPosition => gridPosition;
+
+    protected Vector3 worldPosition;
+    public Vector3 WorldPosition => worldPosition;
     public MeshRenderer tileRenderer;
     public MeshFilter tileFilter;
 

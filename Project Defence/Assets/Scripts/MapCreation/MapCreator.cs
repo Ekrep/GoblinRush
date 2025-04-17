@@ -22,6 +22,7 @@ public class MapCreator : SerializedMonoBehaviour
     public MapCreatorMode creationMode;
     public Dictionary<Vector2Int, GroundTile> tileMap;
     public List<BoundedBoundableData> boundedBoundableDatas;
+    public List<PlacedTileData> placedTileDatas;
 
     public List<Vector2Int> testList;
 
@@ -66,9 +67,10 @@ public class MapCreator : SerializedMonoBehaviour
                         if (currentGroundTilePrefab != null && tileMapPos.x >= 0 && tileMapPos.y >= 0 && !tileMap.ContainsKey(tileMapPos))
                         {
                             GroundTile newTile = PrefabUtility.InstantiatePrefab(currentGroundTilePrefab) as GroundTile;
-                            newTile.gameObject.transform.position = snappedPos;
-                            newTile.gridPosition = tileMapPos;
-                            tileMap.TryAdd(tileMapPos, newTile);
+                            newTile.SetWorldPosition(snappedPos);
+                            newTile.SetGridPosition(tileMapPos);
+                            tileMap.Add(tileMapPos, newTile);
+                            placedTileDatas.Add(new PlacedTileData(currentGroundTilePrefab, tileMapPos, snappedPos));
                         }
                         else
                         {
@@ -142,6 +144,19 @@ public class MapCreator : SerializedMonoBehaviour
                 break;
         }
     }
+    [ContextMenu("Clear Map")]
+    public void ClearMap()
+    {
+        for (int i = 0; i < boundedBoundableDatas.Count; i++)
+        {
+            Destroy(boundedBoundableDatas[i].Probe);
+        }
+        boundedBoundableDatas.Clear();
+        for (int i = 0; i < placedTileDatas.Count; i++)
+        {
+            
+        }
+    }
     [ContextMenu("Clear All Tile Boundables")]
     public void ClearAllTileBoundables()
     {
@@ -155,10 +170,10 @@ public class MapCreator : SerializedMonoBehaviour
     [ContextMenu("Save Map Data")]
     public void SaveMapData()
     {
-        mapData.Save(tileMap.Keys.ToArray(), cellXOffset, cellZOffset, tileScale, boundedBoundableDatas.ToArray());
+        mapData.Save(placedTileDatas.ToArray(), cellXOffset, cellZOffset, tileScale, boundedBoundableDatas.ToArray());
     }
 
-    //based on every boundables pivot point is same, idea
+    //based on every boundables has same pivot point(0,0,0)
     private List<Vector2Int> CalculateBoundablesTilemapPos(Vector2Int mouseCurrentTilePos, BoundableData boundableData)
     {
         List<Vector2Int> points = new List<Vector2Int>();

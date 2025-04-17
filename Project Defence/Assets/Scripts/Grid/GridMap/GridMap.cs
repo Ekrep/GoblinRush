@@ -25,6 +25,8 @@ public class GridMap : SerializedMonoBehaviour
     public Vector2Int[] path;
     public GameObject cube;
 
+    private Plane ground;
+
     void Awake()
     {
         if (instance == null)
@@ -39,33 +41,19 @@ public class GridMap : SerializedMonoBehaviour
     void Start()
     {
         InitializeMap(data);
-        // InitializeTileArray();
-        // CreateGridCells();
-        // CreateVisual();
-        // Debug.Log(TilePositionToWorldPosition(new Vector2Int(3, 3)));
-        // Debug.Log(WorldPositionToTilePosition(new Vector3(13.5f, 0, 24f)));
-        #region TestStuff
-        // currentTileMap[3, 3].SetTileBlockStatus(true);
-        // currentTileMap[0, 1].SetTileBlockStatus(true);
-        // currentTileMap[1, 1].SetTileBlockStatus(true);
-        // currentTileMap[3, 2].SetTileBlockStatus(true);
-        // currentTileMap[2, 3].SetTileBlockStatus(true);
-        // currentTileMap[3, 4].SetTileBlockStatus(true);
-        // currentTileMap[4, 3].SetTileBlockStatus(true);
-        // path = PathFinder.CalculateUntillFindClosestAvailablePath(currentTileMap, new Vector2Int(0, 0), new Vector2Int(3, 3));
-        // for (int i = 0; i < path.Length; i++)
-        // {
-        //     currentTileMap[path[i].x, path[i].y].tileRenderer.material.color = Color.red;
-        // }
-        #endregion
+        ground = new Plane(Vector3.up, Vector3.zero);
     }
-    void Update()
+    private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        ground.Raycast(ray, out float enter);
+        Debug.Log(ray.GetPoint(enter));
+        Vector2Int tilePos = WorldPositionToTilePosition(ray.GetPoint(enter));
+        if (tilePos.x>0&&tilePos.y>0&&tilePos.x < currentTileMap.GetLength(0)&&tilePos.y<currentTileMap.GetLength(1) &&currentTileMap[tilePos.x, tilePos.y] != null)
         {
-            Vector3 pos = GetRandomPointInsideTheTile(TilePositionToWorldPosition(new Vector2Int(2, 2)));
-            cube.transform.position = new Vector3(pos.x, 1.5f, pos.z);
+            currentTileMap[tilePos.x,tilePos.y].tileRenderer.material.color = Color.red;
         }
+
     }
     public Vector3 TilePositionToWorldPosition(Vector2Int tilePosition)
     {
@@ -107,19 +95,17 @@ public class GridMap : SerializedMonoBehaviour
     }
     private void InitializeMap(MapData mapData)
     {
-        //  InitializeTileArray();
-        // CreateGridCells();
-        // CreateVisual();
-        currentTileMap = new GroundTile[mapData.tilePositions.Length, mapData.tilePositions.Length];
+        currentTileMap = new GroundTile[mapData.placedTiles.Length, mapData.placedTiles.Length];
         cellXOffset = mapData.cellXOffset;
         cellZOffset = mapData.cellZOffset;
         tileScale = mapData.tileScale;
-        for (int i = 0; i < mapData.tilePositions.Length; i++)
+        for (int i = 0; i < mapData.placedTiles.Length; i++)
         {
-            GroundTile groundTile = Instantiate(tilePrefab);
-            currentTileMap[mapData.tilePositions[i].x, mapData.tilePositions[i].y] = groundTile;
-            groundTile.SetGridPosition(new Vector2Int(mapData.tilePositions[i].x, mapData.tilePositions[i].y));
-            groundTile.SetWorldPosition(new Vector3(mapData.tilePositions[i].x * cellXOffset, 0, mapData.tilePositions[i].y * cellZOffset));
+            GroundTile groundTile = Instantiate(mapData.placedTiles[i].GroundTile);
+            currentTileMap[mapData.placedTiles[i].GridPos.x, mapData.placedTiles[i].GridPos.y] = groundTile;
+            groundTile.SetGridPosition(mapData.placedTiles[i].GridPos);
+            groundTile.SetWorldPosition(mapData.placedTiles[i].PlacedWorldPosition);
+            groundTile.SetTileScale(tileScale);
         }
         for (int i = 0; i < mapData.boundedBoundableDatas.Length; i++)
         {
@@ -127,49 +113,24 @@ public class GridMap : SerializedMonoBehaviour
             probe.transform.position = mapData.boundedBoundableDatas[i].BoundedWorldPosition;
             probe.OccupyTile(mapData.boundedBoundableDatas[i].BoundedTilePositions);
         }
-        Vector2Int[] path = PathFinder.CalculateUntillFindClosestAvailablePath(currentTileMap, new Vector2Int(1, 0), new Vector2Int(3, 4));
+    }
+
+    private void DebugPath(Vector2Int startPos, Vector2Int endPos)
+    {
+        Vector2Int[] path = PathFinder.CalculateUntillFindClosestAvailablePath(currentTileMap, startPos, endPos);
         for (int i = 0; i < path.Length; i++)
         {
-            GetTileByGridPos(path[i]).tileRenderer.material.color = Color.red;
-        }
-    }
-    private void InitializeTileArray()
-    {
-        cells = new GridCell[gridSizeX, gridSizeZ];
-        testDict = new Dictionary<Vector2Int, GridCell>();
-        currentTileMap = new GroundTile[gridSizeX, gridSizeZ];
-    }
-    private void CreateVisual()
-    {
-        for (int z = 0; z < cells.GetLength(1); z++)
-        {
-            for (int x = 0; x < cells.GetLength(0); x++)
+            if (path[i] != null)
             {
-                GroundTile tile = Instantiate(tilePrefab);
-                tile.SetGridPosition(cells[x, z].GridPos);
-                tile.SetWorldPosition(cells[x, z].WorldPos);
-                tile.SetTileScale(tileScale);
-                currentTileMap[x, z] = tile;
+                GetTileByGridPos(path[i]).tileRenderer.material.color = Color.red;
             }
-        }
-
-    }
-    private void CreateGridCells()
-    {
-        Vector2Int gridPos;
-        Vector3 worldPos;
-        for (int z = 0; z < gridSizeZ; z++)
-        {
-            for (int x = 0; x < gridSizeX; x++)
+            else
             {
-                gridPos = new Vector2Int(x, z);
-                worldPos = new Vector3(x * cellXOffset, 0f, z * cellZOffset);
-                GridCell cell = new GridCell(gridPos, worldPos);
-                cells[x, z] = cell;
-                testDict.Add(gridPos, cell);
+                Debug.LogWarning("Path doesnt exists");
+                break;
             }
-        }
 
+        }
     }
 
 }

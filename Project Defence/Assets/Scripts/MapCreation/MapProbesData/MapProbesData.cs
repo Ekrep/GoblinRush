@@ -7,5 +7,5 @@ using Sirenix.OdinInspector;
 public class MapProbesData : SerializedScriptableObject
 {
     public Dictionary<string, BaseTile> baseTileDict;
-    public Dictionary<string, BoundableProbe> boundableProbes;
+    public BoundableProbe[] boundableProbes;
 }

@@ -21,33 +21,212 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  tilePositions:
-  - {x: 0, y: 0}
-  - {x: 1, y: 0}
-  - {x: 0, y: 1}
-  - {x: 0, y: 2}
-  - {x: 0, y: 3}
-  - {x: 0, y: 4}
-  - {x: 1, y: 4}
-  - {x: 1, y: 2}
-  - {x: 1, y: 3}
-  - {x: 1, y: 1}
-  - {x: 2, y: 0}
-  - {x: 2, y: 2}
-  - {x: 2, y: 4}
-  - {x: 2, y: 3}
-  - {x: 2, y: 1}
-  - {x: 3, y: 0}
-  - {x: 3, y: 1}
-  - {x: 3, y: 2}
-  - {x: 3, y: 4}
-  - {x: 3, y: 3}
-  - {x: 4, y: 4}
-  - {x: 4, y: 3}
-  - {x: 4, y: 2}
-  - {x: 4, y: 1}
-  - {x: 4, y: 0}
   cellXOffset: 1
   cellZOffset: 1
   tileScale: {x: 1, y: 1, z: 1}
-  boundedBoundableDatas: []
+  placedTiles:
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 1, y: 1}
+    placedWorldPosition: {x: 1, y: 0, z: 1}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 1, y: 2}
+    placedWorldPosition: {x: 1, y: 0, z: 2}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 1, y: 3}
+    placedWorldPosition: {x: 1, y: 0, z: 3}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 1, y: 4}
+    placedWorldPosition: {x: 1, y: 0, z: 4}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 1, y: 5}
+    placedWorldPosition: {x: 1, y: 0, z: 5}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 1, y: 6}
+    placedWorldPosition: {x: 1, y: 0, z: 6}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 1, y: 7}
+    placedWorldPosition: {x: 1, y: 0, z: 7}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 1, y: 8}
+    placedWorldPosition: {x: 1, y: 0, z: 8}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 1, y: 9}
+    placedWorldPosition: {x: 1, y: 0, z: 9}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 2, y: 9}
+    placedWorldPosition: {x: 2, y: 0, z: 9}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 2, y: 8}
+    placedWorldPosition: {x: 2, y: 0, z: 8}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 2, y: 7}
+    placedWorldPosition: {x: 2, y: 0, z: 7}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 2, y: 6}
+    placedWorldPosition: {x: 2, y: 0, z: 6}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 2, y: 4}
+    placedWorldPosition: {x: 2, y: 0, z: 4}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 2, y: 3}
+    placedWorldPosition: {x: 2, y: 0, z: 3}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 2, y: 2}
+    placedWorldPosition: {x: 2, y: 0, z: 2}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 2, y: 1}
+    placedWorldPosition: {x: 2, y: 0, z: 1}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 2, y: 5}
+    placedWorldPosition: {x: 2, y: 0, z: 5}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 3, y: 1}
+    placedWorldPosition: {x: 3, y: 0, z: 1}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 3, y: 2}
+    placedWorldPosition: {x: 3, y: 0, z: 2}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 3, y: 3}
+    placedWorldPosition: {x: 3, y: 0, z: 3}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 3, y: 4}
+    placedWorldPosition: {x: 3, y: 0, z: 4}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 3, y: 5}
+    placedWorldPosition: {x: 3, y: 0, z: 5}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 3, y: 6}
+    placedWorldPosition: {x: 3, y: 0, z: 6}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 3, y: 7}
+    placedWorldPosition: {x: 3, y: 0, z: 7}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 3, y: 8}
+    placedWorldPosition: {x: 3, y: 0, z: 8}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 3, y: 9}
+    placedWorldPosition: {x: 3, y: 0, z: 9}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 4, y: 9}
+    placedWorldPosition: {x: 4, y: 0, z: 9}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 4, y: 8}
+    placedWorldPosition: {x: 4, y: 0, z: 8}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 4, y: 7}
+    placedWorldPosition: {x: 4, y: 0, z: 7}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 4, y: 6}
+    placedWorldPosition: {x: 4, y: 0, z: 6}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 4, y: 5}
+    placedWorldPosition: {x: 4, y: 0, z: 5}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 4, y: 4}
+    placedWorldPosition: {x: 4, y: 0, z: 4}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 4, y: 3}
+    placedWorldPosition: {x: 4, y: 0, z: 3}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 4, y: 2}
+    placedWorldPosition: {x: 4, y: 0, z: 2}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 4, y: 1}
+    placedWorldPosition: {x: 4, y: 0, z: 1}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 5, y: 1}
+    placedWorldPosition: {x: 5, y: 0, z: 1}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 5, y: 3}
+    placedWorldPosition: {x: 5, y: 0, z: 3}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 5, y: 5}
+    placedWorldPosition: {x: 5, y: 0, z: 5}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 5, y: 6}
+    placedWorldPosition: {x: 5, y: 0, z: 6}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 5, y: 7}
+    placedWorldPosition: {x: 5, y: 0, z: 7}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 5, y: 8}
+    placedWorldPosition: {x: 5, y: 0, z: 8}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 5, y: 9}
+    placedWorldPosition: {x: 5, y: 0, z: 9}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 5, y: 4}
+    placedWorldPosition: {x: 5, y: 0, z: 4}
+  - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
+      type: 3}
+    gridPosition: {x: 5, y: 2}
+    placedWorldPosition: {x: 5, y: 0, z: 2}
+  boundedBoundableDatas:
+  - probe: {fileID: 4474275342971113792, guid: 5a4acca31756dc84bb2039bd1a1c3811, type: 3}
+    boundedWorldPosition: {x: 1, y: 1, z: 3}
+    boundedTilePositions:
+    - {x: 1, y: 3}
+    - {x: 2, y: 3}
+    - {x: 3, y: 3}
+    - {x: 1, y: 2}
+    - {x: 2, y: 2}
+    - {x: 3, y: 2}
+    - {x: 1, y: 1}
+    - {x: 2, y: 1}
+    - {x: 3, y: 1}
+  - probe: {fileID: 4474275342971113792, guid: 5a4acca31756dc84bb2039bd1a1c3811, type: 3}
+    boundedWorldPosition: {x: 3, y: 1, z: 9}
+    boundedTilePositions:
+    - {x: 3, y: 9}
+    - {x: 4, y: 9}
+    - {x: 5, y: 9}
+    - {x: 3, y: 8}
+    - {x: 4, y: 8}
+    - {x: 5, y: 8}
+    - {x: 3, y: 7}
+    - {x: 4, y: 7}
+    - {x: 5, y: 7}

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public abstract class BoundableProbe : MonoBehaviour
 {
     public BoundableData boundableData;
@@ -28,5 +29,9 @@ public abstract class BoundableProbe : MonoBehaviour
             Bound(tile, true);
         }
 
+    }
+    public void SetScale(Vector3 scale)
+    {
+        transform.localScale = scale;
     }
 }

@@ -10,17 +10,20 @@ namespace Scriptables.MapCreation.MapData
     [CreateAssetMenu(menuName = "Data/MapData")]
     public class MapData : SerializedScriptableObject
     {
-        [Header("Tile Values")]
-        public Vector2Int[] tilePositions;
+        [Header("Grid Values")]
         public float cellXOffset;
         public float cellZOffset;
         public Vector3 tileScale;
+
+        [Header("Tile Values")]
+        public PlacedTileData[] placedTiles;
+        
         [Header("Boundable Object Values")]
         public BoundedBoundableData[] boundedBoundableDatas;
 
-        public void Save(Vector2Int[] tilePositions, float cellXOffset, float cellZOffset, Vector3 tileScale, BoundedBoundableData[] boundables)
+        public void Save(PlacedTileData[] placedTiles, float cellXOffset, float cellZOffset, Vector3 tileScale, BoundedBoundableData[] boundables)
         {
-            this.tilePositions = tilePositions;
+            this.placedTiles = placedTiles;
             this.cellXOffset = cellXOffset;
             this.cellZOffset = cellZOffset;
             this.tileScale = tileScale;

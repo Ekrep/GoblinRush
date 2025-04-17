@@ -52,7 +52,7 @@ public class Unit : MonoBehaviour
     }
     protected void Move(BaseTile tile)
     {
-        MoveWithAnim(tile.worldPosition);
+        MoveWithAnim(tile.WorldPosition);
     }
     protected void MoveRandomPositionInTile(Vector2Int tilePos)
     {

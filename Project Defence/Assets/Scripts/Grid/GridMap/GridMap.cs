@@ -103,14 +103,16 @@ public class GridMap : SerializedMonoBehaviour
         {
             GroundTile groundTile = Instantiate(mapData.placedTiles[i].GroundTile);
             currentTileMap[mapData.placedTiles[i].GridPos.x, mapData.placedTiles[i].GridPos.y] = groundTile;
-            groundTile.SetGridPosition(mapData.placedTiles[i].GridPos);
-            groundTile.SetWorldPosition(mapData.placedTiles[i].PlacedWorldPosition);
             groundTile.SetTileScale(tileScale);
+            groundTile.SetGridPosition(mapData.placedTiles[i].GridPos);
+            groundTile.SetWorldPosition(new Vector3(mapData.placedTiles[i].PlacedWorldPosition.x * cellXOffset, mapData.placedTiles[i].PlacedWorldPosition.y, mapData.placedTiles[i].PlacedWorldPosition.z * cellZOffset));
+
         }
         for (int i = 0; i < mapData.boundedBoundableDatas.Length; i++)
         {
             BoundableProbe probe = Instantiate(mapData.boundedBoundableDatas[i].Probe);
-            probe.transform.position = mapData.boundedBoundableDatas[i].BoundedWorldPosition;
+            probe.SetScale(tileScale);
+            probe.transform.position = new Vector3(mapData.boundedBoundableDatas[i].BoundedWorldPosition.x * cellXOffset, mapData.boundedBoundableDatas[i].BoundedWorldPosition.y /*+ celloffset*/, mapData.boundedBoundableDatas[i].BoundedWorldPosition.z * cellZOffset);
             probe.OccupyTile(mapData.boundedBoundableDatas[i].BoundedTilePositions);
         }
     }

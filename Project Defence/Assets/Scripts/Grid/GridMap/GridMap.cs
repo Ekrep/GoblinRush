@@ -116,12 +116,12 @@ public class GridMap : SerializedMonoBehaviour
     }
     public bool IsPositionValidOnTilemap(Vector2Int tilePos)
     {
-        return tilePos.x > 0 && tilePos.y > 0 && tilePos.x < currentTileMap.GetLength(0) && tilePos.y < currentTileMap.GetLength(1) && currentTileMap[tilePos.x, tilePos.y] != null
+        return tilePos.x > 0 && tilePos.y > 0 && tilePos.x < currentTileMap.GetLength(0) && tilePos.y < currentTileMap.GetLength(1) && currentTileMap[tilePos.x, tilePos.y] != null;
     }
     public bool IsPositionValidOnTilemap(Vector3 worldPos)
     {
         Vector2Int tilePos = WorldPositionToTilePosition(worldPos);
-        return tilePos.x > 0 && tilePos.y > 0 && tilePos.x < currentTileMap.GetLength(0) && tilePos.y < currentTileMap.GetLength(1) && currentTileMap[tilePos.x, tilePos.y] != null
+        return tilePos.x > 0 && tilePos.y > 0 && tilePos.x < currentTileMap.GetLength(0) && tilePos.y < currentTileMap.GetLength(1) && currentTileMap[tilePos.x, tilePos.y] != null;
     }
     private void DebugPath(Vector2Int startPos, Vector2Int endPos)
     {

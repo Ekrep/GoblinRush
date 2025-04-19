@@ -11,10 +11,9 @@ public abstract class BoundableProbe : MonoBehaviour
     public List<GroundTile> boundedTiles;
 
     public abstract void OnUnbound();
-    private void Bound(GroundTile tile, bool canBlockTile)
+    public virtual void Initialize(Vector2Int[] occupiedTilePositions)
     {
-        tile.BoundTheBoundable(this, canBlockTile);
-        boundedTiles.Add(tile);
+        OccupyTile(occupiedTilePositions);
     }
     public void OccupyTile(Vector2Int tilePos)
     {
@@ -29,6 +28,11 @@ public abstract class BoundableProbe : MonoBehaviour
             Bound(tile, true);
         }
 
+    }
+    private void Bound(GroundTile tile, bool canBlockTile)
+    {
+        tile.BoundTheBoundable(this, canBlockTile);
+        boundedTiles.Add(tile);
     }
     public void SetScale(Vector3 scale)
     {

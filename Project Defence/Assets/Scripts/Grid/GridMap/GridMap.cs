@@ -5,28 +5,23 @@ using Sirenix.OdinInspector;
 using StaticHelpers.PathFinder;
 using StaticHelpers.Random;
 using Scriptables.MapCreation.MapData;
+using System;
+using static StaticHelpers.MapCreationUtils.MapCreationUtils;
+using static StaticHelpers.Util.Utils;
 
-public class GridMap : SerializedMonoBehaviour
+public partial class GridMap : SerializedMonoBehaviour
 {
     private static GridMap instance;
     public static GridMap Instance => instance;
     public MapData data;
-    private GridCell[,] cells;//deprecated remove it!!
+    [SerializeField] private PlacedTileData[] placedTileDatas;
     private GroundTile[,] currentTileMap;
     public GroundTile[,] CurrentTileMap => currentTileMap;
-    public Dictionary<Vector2Int, GridCell> testDict;
-    [SerializeField] private int gridSizeX;
-    [SerializeField] private int gridSizeZ;
     [SerializeField] private Vector3 tileScale;
     public Vector3 TileScale => tileScale;
     [SerializeField] private float cellXOffset;
     [SerializeField] private float cellZOffset;
-    [SerializeField] private GroundTile tilePrefab;
-    public Vector2Int[] path;
-    public GameObject cube;
-
     private Plane ground;
-
     void Awake()
     {
         if (instance == null)
@@ -45,9 +40,9 @@ public class GridMap : SerializedMonoBehaviour
     }
     private void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(InputController.Instance.mousePos);
         ground.Raycast(ray, out float enter);
-        Debug.Log(ray.GetPoint(enter));
+        //Debug.Log(ray.GetPoint(enter));
         Vector2Int tilePos = WorldPositionToTilePosition(ray.GetPoint(enter));
         if (tilePos.x > 0 && tilePos.y > 0 && tilePos.x < currentTileMap.GetLength(0) && tilePos.y < currentTileMap.GetLength(1) && currentTileMap[tilePos.x, tilePos.y] != null)
         {
@@ -55,6 +50,42 @@ public class GridMap : SerializedMonoBehaviour
         }
 
     }
+
+    private void InitializeMap(MapData mapData)
+    {
+        GameObject mapParentObj = new GameObject("MapParent");
+        currentTileMap = new GroundTile[mapData.placedTiles.Length, mapData.placedTiles.Length];
+        cellXOffset = mapData.cellXOffset;
+        cellZOffset = mapData.cellZOffset;
+        tileScale = mapData.tileScale;
+        placedTileDatas = mapData.placedTiles;
+        mapParentObj.transform.position = mapData.placedTiles[mapData.placedTiles.Length / 2].PlacedWorldPosition;//temporary fix!!
+        for (int i = 0; i < mapData.placedTiles.Length; i++)
+        {
+            GroundTile groundTile = Instantiate(mapData.placedTiles[i].GroundTile);
+            currentTileMap[mapData.placedTiles[i].GridPos.x, mapData.placedTiles[i].GridPos.y] = groundTile;
+            groundTile.SetTileScale(tileScale);
+            groundTile.SetGridPosition(mapData.placedTiles[i].GridPos);
+            groundTile.SetWorldPosition(new Vector3(mapData.placedTiles[i].PlacedWorldPosition.x * cellXOffset, mapData.placedTiles[i].PlacedWorldPosition.y, mapData.placedTiles[i].PlacedWorldPosition.z * cellZOffset));
+            groundTile.transform.SetParent(mapParentObj.transform);//it may cause bug!
+        }
+        for (int i = 0; i < mapData.boundedBoundableDatas.Length; i++)
+        {
+            BoundableProbe probe = Instantiate(mapData.boundedBoundableDatas[i].Probe);
+            probe.SetScale(tileScale);
+            probe.transform.position = new Vector3(mapData.boundedBoundableDatas[i].BoundedWorldPosition.x * cellXOffset, mapData.boundedBoundableDatas[i].BoundedWorldPosition.y * tileScale.y, mapData.boundedBoundableDatas[i].BoundedWorldPosition.z * cellZOffset);
+            probe.Initialize(mapData.boundedBoundableDatas[i].BoundedTilePositions);
+            probe.transform.SetParent(mapParentObj.transform);
+        }
+        OnGridMapInitialized(mapParentObj.transform);
+    }
+    private void InitializePaths(MapData mapData)
+    {
+        PathData[] paths=new PathData[mapData.possiblePathStartPoints.Length];
+
+
+    }
+    #region  Map Helper Funcitons
     public Vector3 TilePositionToWorldPosition(Vector2Int tilePosition)
     {
         return new Vector3(tilePosition.x * cellXOffset, 0, tilePosition.y * cellZOffset);
@@ -93,29 +124,7 @@ public class GridMap : SerializedMonoBehaviour
         return position;
 
     }
-    private void InitializeMap(MapData mapData)
-    {
-        currentTileMap = new GroundTile[mapData.placedTiles.Length, mapData.placedTiles.Length];
-        cellXOffset = mapData.cellXOffset;
-        cellZOffset = mapData.cellZOffset;
-        tileScale = mapData.tileScale;
-        for (int i = 0; i < mapData.placedTiles.Length; i++)
-        {
-            GroundTile groundTile = Instantiate(mapData.placedTiles[i].GroundTile);
-            currentTileMap[mapData.placedTiles[i].GridPos.x, mapData.placedTiles[i].GridPos.y] = groundTile;
-            groundTile.SetTileScale(tileScale);
-            groundTile.SetGridPosition(mapData.placedTiles[i].GridPos);
-            groundTile.SetWorldPosition(new Vector3(mapData.placedTiles[i].PlacedWorldPosition.x * cellXOffset, mapData.placedTiles[i].PlacedWorldPosition.y, mapData.placedTiles[i].PlacedWorldPosition.z * cellZOffset));
 
-        }
-        for (int i = 0; i < mapData.boundedBoundableDatas.Length; i++)
-        {
-            BoundableProbe probe = Instantiate(mapData.boundedBoundableDatas[i].Probe);
-            probe.SetScale(tileScale);
-            probe.transform.position = new Vector3(mapData.boundedBoundableDatas[i].BoundedWorldPosition.x * cellXOffset, mapData.boundedBoundableDatas[i].BoundedWorldPosition.y /*+ celloffset*/, mapData.boundedBoundableDatas[i].BoundedWorldPosition.z * cellZOffset);
-            probe.OccupyTile(mapData.boundedBoundableDatas[i].BoundedTilePositions);
-        }
-    }
     public bool IsPositionValidOnTilemap(Vector2Int tilePos)
     {
         return tilePos.x > 0 && tilePos.y > 0 && tilePos.x < currentTileMap.GetLength(0) && tilePos.y < currentTileMap.GetLength(1) && currentTileMap[tilePos.x, tilePos.y] != null;
@@ -142,5 +151,23 @@ public class GridMap : SerializedMonoBehaviour
 
         }
     }
+    #endregion
 
 }
+#region Events
+public partial class GridMap
+{
+    public static event Action<Transform> GridMapInitialized;
+
+    public void OnGridMapInitialized(Transform mapParent)
+    {
+        if (GridMapInitialized != null)
+        {
+            GridMapInitialized(mapParent);
+        }
+
+    }
+
+
+}
+#endregion

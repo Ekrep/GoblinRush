@@ -1,0 +1,33 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using NewInputSystem;
+using UnityEngine.InputSystem;
+
+public class InputController : MonoBehaviour
+{
+    private static InputController instance;
+    public static InputController Instance => instance;
+    private Inputs inputs;
+    public Inputs Inputs => inputs;
+    public Vector2 mousePos;
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+        inputs=new Inputs();
+        inputs.Gameplay.Enable();
+    }
+
+    void Update()
+    {
+        mousePos=Mouse.current.position.ReadValue();
+    }
+
+}

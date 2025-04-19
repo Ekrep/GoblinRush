@@ -23,9 +23,6 @@ public class MapCreator : SerializedMonoBehaviour
     public Dictionary<Vector2Int, GroundTile> tileMap;
     public List<BoundedBoundableData> boundedBoundableDatas;
     public List<PlacedTileData> placedTileDatas;
-
-    public List<Vector2Int> testList;
-
     private Vector3 mouseWorldPos;
     private Plane ground;
 
@@ -81,8 +78,7 @@ public class MapCreator : SerializedMonoBehaviour
                         snappedPos = PositionConvertor.TilePositionToWorldPosition(tileMapPos, new Vector2(cellXOffset, cellZOffset));
                         if (currentBoundableProbePrefab != null && tileMap.ContainsKey(tileMapPos))
                         {
-                            testList = CalculateBoundablesTilemapPos(tileMapPos, currentBoundableProbePrefab.boundableData);
-                            List<Vector2Int> boundPositions = testList;
+                            List<Vector2Int> boundPositions = CalculateBoundablesTilemapPos(tileMapPos, currentBoundableProbePrefab.boundableData);
                             if (boundPositions != null)
                             {
                                 BoundableProbe boundableProbe = PrefabUtility.InstantiatePrefab(currentBoundableProbePrefab) as BoundableProbe;
@@ -95,7 +91,6 @@ public class MapCreator : SerializedMonoBehaviour
                                 }
 
                             }
-
 
                         }
                         else
@@ -154,7 +149,7 @@ public class MapCreator : SerializedMonoBehaviour
         boundedBoundableDatas.Clear();
         for (int i = 0; i < placedTileDatas.Count; i++)
         {
-            
+
         }
     }
     [ContextMenu("Clear All Tile Boundables")]
@@ -170,7 +165,12 @@ public class MapCreator : SerializedMonoBehaviour
     [ContextMenu("Save Map Data")]
     public void SaveMapData()
     {
-        mapData.Save(placedTileDatas.ToArray(), cellXOffset, cellZOffset, tileScale, boundedBoundableDatas.ToArray());
+        var keys = tileMap.Keys;
+        Vector2Int min = new Vector2Int(keys.Min(p => p.x), keys.Min(p => p.y));
+        Vector2Int max = new Vector2Int(keys.Max(p => p.x), keys.Max(p => p.y));
+        //this system currently only works on square type maps!!
+        Vector2Int[] possiblePathStartPoints = keys.Where(pos => pos.x == min.x || pos.x == max.x || pos.y == min.y || pos.y == max.y).ToArray();
+        mapData.Save(placedTileDatas.ToArray(), cellXOffset, cellZOffset, tileScale, boundedBoundableDatas.ToArray(), min, max, possiblePathStartPoints);
     }
 
     //based on every boundables has same pivot point(0,0,0)

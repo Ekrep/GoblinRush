@@ -24,6 +24,8 @@ MonoBehaviour:
   cellXOffset: 1
   cellZOffset: 1
   tileScale: {x: 1, y: 1, z: 1}
+  minBounds: {x: 1, y: 1}
+  maxBounds: {x: 5, y: 9}
   placedTiles:
   - groundTile: {fileID: 7487853783378629248, guid: 7d860a90f7dc7c043944bb15d12da9d6,
       type: 3}

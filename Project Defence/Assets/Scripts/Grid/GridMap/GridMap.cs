@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
@@ -6,22 +5,28 @@ using StaticHelpers.PathFinder;
 using StaticHelpers.Random;
 using Scriptables.MapCreation.MapData;
 using System;
-using static StaticHelpers.MapCreationUtils.MapCreationUtils;
 using static StaticHelpers.Util.Utils;
+using System.Linq;
+using PoolSystem;
 
 public partial class GridMap : SerializedMonoBehaviour
 {
     private static GridMap instance;
     public static GridMap Instance => instance;
     public MapData data;
-    [SerializeField] private PlacedTileData[] placedTileDatas;
-    private GroundTile[,] currentTileMap;
-    public GroundTile[,] CurrentTileMap => currentTileMap;
+    private Dictionary<Vector2Int, GroundTile> currentTileMap = new Dictionary<Vector2Int, GroundTile>();//It must be a dictionary because the maps are created dynamically!
+    public Dictionary<Vector2Int, GroundTile> CurrentTileMap => currentTileMap;
+    private List<BoundableProbe> currentBoundables = new List<BoundableProbe>();
+    public List<BoundableProbe> CurrentBoundables => currentBoundables;
     [SerializeField] private Vector3 tileScale;
     public Vector3 TileScale => tileScale;
     [SerializeField] private float cellXOffset;
+    public float CellXOffset => cellXOffset;
     [SerializeField] private float cellZOffset;
-    private Plane ground;
+    public float CellZOffset => cellZOffset;
+    public GridPath[] paths;
+
+    private GameObject mapParent;
     void Awake()
     {
         if (instance == null)
@@ -33,58 +38,102 @@ public partial class GridMap : SerializedMonoBehaviour
             Destroy(this);
         }
     }
-    void Start()
+    public void LoadMap(MapData mapData)
     {
-        InitializeMap(data);
-        ground = new Plane(Vector3.up, Vector3.zero);
-    }
-    private void Update()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(InputController.Instance.mousePos);
-        ground.Raycast(ray, out float enter);
-        //Debug.Log(ray.GetPoint(enter));
-        Vector2Int tilePos = WorldPositionToTilePosition(ray.GetPoint(enter));
-        if (tilePos.x > 0 && tilePos.y > 0 && tilePos.x < currentTileMap.GetLength(0) && tilePos.y < currentTileMap.GetLength(1) && currentTileMap[tilePos.x, tilePos.y] != null)
+        if (mapParent == null)
         {
-            currentTileMap[tilePos.x, tilePos.y].tileRenderer.material.color = Color.red;
+            mapParent = new GameObject("MapParent");
         }
-
-    }
-
-    private void InitializeMap(MapData mapData)
-    {
-        GameObject mapParentObj = new GameObject("MapParent");
-        currentTileMap = new GroundTile[mapData.placedTiles.Length, mapData.placedTiles.Length];
-        cellXOffset = mapData.cellXOffset;
-        cellZOffset = mapData.cellZOffset;
-        tileScale = mapData.tileScale;
-        placedTileDatas = mapData.placedTiles;
-        mapParentObj.transform.position = mapData.placedTiles[mapData.placedTiles.Length / 2].PlacedWorldPosition;//temporary fix!!
         for (int i = 0; i < mapData.placedTiles.Length; i++)
         {
-            GroundTile groundTile = Instantiate(mapData.placedTiles[i].GroundTile);
-            currentTileMap[mapData.placedTiles[i].GridPos.x, mapData.placedTiles[i].GridPos.y] = groundTile;
-            groundTile.SetTileScale(tileScale);
-            groundTile.SetGridPosition(mapData.placedTiles[i].GridPos);
-            groundTile.SetWorldPosition(new Vector3(mapData.placedTiles[i].PlacedWorldPosition.x * cellXOffset, mapData.placedTiles[i].PlacedWorldPosition.y, mapData.placedTiles[i].PlacedWorldPosition.z * cellZOffset));
-            groundTile.transform.SetParent(mapParentObj.transform);//it may cause bug!
+            PoolManager.Instance.TryCreatePool(mapData.placedTiles[i].GroundTile.GetType().Name, mapData.placedTiles[i].GroundTile, 5, mapParent.transform);
         }
         for (int i = 0; i < mapData.boundedBoundableDatas.Length; i++)
         {
-            BoundableProbe probe = Instantiate(mapData.boundedBoundableDatas[i].Probe);
+            PoolManager.Instance.TryCreatePool(mapData.boundedBoundableDatas[i].Probe.GetType().Name, mapData.boundedBoundableDatas[i].Probe, 3, mapParent.transform);
+        }
+        for (int i = 0; i < currentBoundables.Count; i++)
+        {
+            PoolManager.Instance.EnqueueItemToPool(currentBoundables[i].GetType().Name, currentBoundables[i]);
+        }
+        currentBoundables = null;
+        for (int i = 0; i < currentTileMap.Count; i++)
+        {
+            PoolManager.Instance.EnqueueItemToPool(currentTileMap.ElementAt(i).Value.GetType().Name, currentTileMap.ElementAt(i).Value);
+        }
+        currentTileMap = null;
+        paths = null;
+        InitializeMap(mapData);
+    }
+    private void InitializeMap(MapData mapData)
+    {
+        currentTileMap = new Dictionary<Vector2Int, GroundTile>(mapData.placedTiles.Length);
+        currentBoundables = new List<BoundableProbe>(mapData.boundedBoundableDatas.Length);
+        cellXOffset = mapData.cellXOffset;
+        cellZOffset = mapData.cellZOffset;
+        tileScale = mapData.tileScale;
+        Vector3 minPos = TilePositionToWorldPosition(mapData.minBounds);
+        Vector3 maxPos = TilePositionToWorldPosition(mapData.maxBounds);
+        Vector3 dist = maxPos - minPos;
+        mapParent.transform.position = dist / 2f;
+        for (int i = 0; i < mapData.placedTiles.Length; i++)
+        {
+            PoolManager.Instance.TryDequeueItemFromPool(mapData.placedTiles[i].GroundTile.GetType().Name, out GroundTile groundTile);
+            currentTileMap.TryAdd(mapData.placedTiles[i].GridPos, groundTile);
+            groundTile.SetTileScale(tileScale);
+            groundTile.gameObject.name = mapData.placedTiles[i].GridPos.ToString();
+            groundTile.SetGridPosition(mapData.placedTiles[i].GridPos);
+            groundTile.SetWorldPosition(new Vector3(mapData.placedTiles[i].PlacedWorldPosition.x * cellXOffset, mapData.placedTiles[i].PlacedWorldPosition.y, mapData.placedTiles[i].PlacedWorldPosition.z * cellZOffset));
+            groundTile.transform.SetParent(mapParent.transform);//it may cause bug!
+            groundTile.Initialize();
+        }
+        for (int i = 0; i < mapData.boundedBoundableDatas.Length; i++)
+        {
+            PoolManager.Instance.TryDequeueItemFromPool(mapData.boundedBoundableDatas[i].Probe.GetType().Name, out BoundableProbe probe);
             probe.SetScale(tileScale);
             probe.transform.position = new Vector3(mapData.boundedBoundableDatas[i].BoundedWorldPosition.x * cellXOffset, mapData.boundedBoundableDatas[i].BoundedWorldPosition.y * tileScale.y, mapData.boundedBoundableDatas[i].BoundedWorldPosition.z * cellZOffset);
-            probe.Initialize(mapData.boundedBoundableDatas[i].BoundedTilePositions);
-            probe.transform.SetParent(mapParentObj.transform);
+            probe.Initialize(mapData.boundedBoundableDatas[i].BoundedTilePositions, mapData.boundedBoundableDatas[i].BoundablePivotPoint);
+            probe.transform.SetParent(mapParent.transform);
+            currentBoundables.Add(probe);
         }
-        OnGridMapInitialized(mapParentObj.transform);
+        //set path datas(reference type)
+        InitializePaths(mapData);
+
     }
     private void InitializePaths(MapData mapData)
     {
-        PathData[] paths=new PathData[mapData.possiblePathStartPoints.Length];
-
-
+        PathData[] pathDatas = mapData.pathDatas;
+        paths = new GridPath[pathDatas.Length];
+        for (int i = 0; i < pathDatas.Length; i++)
+        {
+            paths[i] = new GridPath(pathDatas[i]);
+        }
+        GridMapInitialized(mapParent.transform, mapData);
+        LevelLoader.Instance.LevelLoaded();
     }
+    public bool TryToGetPathWithStartPosition(Vector2Int pathStartPos, out GridPath path)
+    {
+        for (int i = 0; i < paths.Length; i++)
+        {
+            if (pathStartPos == paths[i].PathStartGridPos)
+            {
+                path = paths[i];
+                if (path.NeedsCalculation)
+                {
+                    path.RecalculatePath(currentTileMap);
+                }
+                return true;
+            }
+        }
+        path = null;
+        return false;
+    }
+
+}
+#region Helpers
+public partial class GridMap
+{
+
     #region  Map Helper Funcitons
     public Vector3 TilePositionToWorldPosition(Vector2Int tilePosition)
     {
@@ -98,13 +147,28 @@ public partial class GridMap : SerializedMonoBehaviour
     public GroundTile GetTileByWorldPos(Vector3 tileWorldPos)
     {
         //check later
-        Vector2Int gridPos = new Vector2Int((int)(tileWorldPos.x / cellXOffset), (int)(tileWorldPos.z / cellZOffset));
-        return currentTileMap[gridPos.x, gridPos.y];
+        Vector2Int gridPos = WorldPositionToTilePosition(tileWorldPos);
+        if (currentTileMap.TryGetValue(gridPos, out GroundTile groundTile))
+        {
+            return groundTile;
+        }
+        else
+        {
+            return null;
+        }
+
 
     }
     public GroundTile GetTileByGridPos(Vector2Int tileGridPos)
     {
-        return currentTileMap[tileGridPos.x, tileGridPos.y];
+        if (currentTileMap.TryGetValue(tileGridPos, out GroundTile groundTile))
+        {
+            return groundTile;
+        }
+        else
+        {
+            return null;
+        }
     }
     public Vector3 GetRandomPointInsideTheTile(Vector3 tileWorldPos)
     {
@@ -124,48 +188,57 @@ public partial class GridMap : SerializedMonoBehaviour
         return position;
 
     }
-
     public bool IsPositionValidOnTilemap(Vector2Int tilePos)
     {
-        return tilePos.x > 0 && tilePos.y > 0 && tilePos.x < currentTileMap.GetLength(0) && tilePos.y < currentTileMap.GetLength(1) && currentTileMap[tilePos.x, tilePos.y] != null;
+        return currentTileMap.ContainsKey(tilePos);
     }
     public bool IsPositionValidOnTilemap(Vector3 worldPos)
     {
         Vector2Int tilePos = WorldPositionToTilePosition(worldPos);
-        return tilePos.x > 0 && tilePos.y > 0 && tilePos.x < currentTileMap.GetLength(0) && tilePos.y < currentTileMap.GetLength(1) && currentTileMap[tilePos.x, tilePos.y] != null;
+        return currentTileMap.ContainsKey(tilePos);
     }
-    private void DebugPath(Vector2Int startPos, Vector2Int endPos)
+    public int TileManhattanDistance(Vector2Int tile1, Vector2Int tile2)
     {
-        Vector2Int[] path = PathFinder.CalculateUntillFindClosestAvailablePath(currentTileMap, startPos, endPos);
-        for (int i = 0; i < path.Length; i++)
-        {
-            if (path[i] != null)
-            {
-                GetTileByGridPos(path[i]).tileRenderer.material.color = Color.red;
-            }
-            else
-            {
-                Debug.LogWarning("Path doesnt exists");
-                break;
-            }
+        return Mathf.Abs(tile1.x - tile2.x) + Mathf.Abs(tile1.y - tile2.y);
+    }
+    public Vector2Int[] GetFourAxisNeighbors(Vector2Int tilePos)
+    {
+        return PathFinder.GetFourAxisNeighborPositions(tilePos);
+    }
+    public Vector2Int[] GetEightAxisNeighbors(Vector2Int tilePos)
+    {
+        return PathFinder.GetFourAxisNeighborPositions(tilePos);
 
-        }
     }
     #endregion
 
 }
+#endregion
+
 #region Events
 public partial class GridMap
 {
-    public static event Action<Transform> GridMapInitialized;
+    public static event Action<Transform, MapData> OnGridMapInitialized;
+    public static event Action OnTileModified;
 
-    public void OnGridMapInitialized(Transform mapParent)
+    public void GridMapInitialized(Transform mapParent, MapData mapData)
     {
-        if (GridMapInitialized != null)
+        if (OnGridMapInitialized != null)
         {
-            GridMapInitialized(mapParent);
+            OnGridMapInitialized(mapParent, mapData);
         }
 
+    }
+    public void TileModified()
+    {
+        if (OnTileModified != null)
+        {
+            OnTileModified();
+        }
+        for (int i = 0; i < paths.Length; i++)
+        {
+            paths[i].SetNeedsRecalculation(true);
+        }
     }
 
 

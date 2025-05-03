@@ -10,9 +10,6 @@ namespace Scriptables.UnitData.GoblinData
     public class GoblinData : UnitData
     {
         public GoblinType goblinType;
-        public Sprite icon;
-        public int trainCost;
-
     }
 }
 

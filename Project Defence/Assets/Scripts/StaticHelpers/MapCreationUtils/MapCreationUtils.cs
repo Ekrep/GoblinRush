@@ -43,11 +43,14 @@ namespace StaticHelpers.MapCreationUtils
             public Vector3 BoundedWorldPosition => boundedWorldPosition;
             [SerializeField] private Vector2Int[] boundedTilePositions;
             public Vector2Int[] BoundedTilePositions => boundedTilePositions;
-            public BoundedBoundableData(BoundableProbe probe, Vector2Int[] boundedTilePositions, Vector3 boundedWorldPosition)
+            [SerializeField] private Vector2Int boundablePivotPoint;
+            public Vector2Int BoundablePivotPoint => boundablePivotPoint;
+            public BoundedBoundableData(BoundableProbe probe, Vector2Int[] boundedTilePositions, Vector3 boundedWorldPosition, Vector2Int pivotPoint)
             {
                 this.probe = probe;
                 this.boundedTilePositions = boundedTilePositions;
                 this.boundedWorldPosition = boundedWorldPosition;
+                boundablePivotPoint = pivotPoint;
             }
 
         }

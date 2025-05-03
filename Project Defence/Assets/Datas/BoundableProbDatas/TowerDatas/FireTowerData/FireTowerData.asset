@@ -21,10 +21,11 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  size: 2
-  height: 2.5
+  size: 1
+  height: 1.5
+  canBlockTile: 1
   towerPrefab: {fileID: 0}
-  range: 0
+  range: 2
   level: 0
-  rateOfFire: 0
-  attackDamage: 0
+  cooldown: 0.5
+  attackDamage: 1

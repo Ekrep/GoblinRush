@@ -99,3 +99,4 @@ MonoBehaviour:
   boundableData: {fileID: 11400000, guid: 4aaa0464d22c4b7469ae8a163cdb9c56, type: 2}
   meshFilter: {fileID: 8223110089846307142}
   probePivotPoint: {x: 0, y: 0}
+  boundedTiles: []

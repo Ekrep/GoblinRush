@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using PoolSystem.Poolable;
 using UnityEngine;
-
-public class BaseTile : MonoBehaviour
+public abstract class BaseTile : MonoBehaviour, IPoolable
 {
     [SerializeField] protected BoundableProbe boundableProbe;
     public BoundableProbe BoundableProbe => boundableProbe;
@@ -17,6 +17,11 @@ public class BaseTile : MonoBehaviour
     public Vector3 WorldPosition => worldPosition;
     public MeshRenderer tileRenderer;
     public MeshFilter tileFilter;
+
+    public virtual void Initialize()
+    {
+        //currently empty
+    }
 
     public Vector3 GetWorldPosition()
     {
@@ -54,5 +59,31 @@ public class BaseTile : MonoBehaviour
         boundableProbe = null;
         isOccupied = false;
         SetTileBlockStatus(false);
+    }
+
+    public virtual void OnCreatedForPool()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public virtual void OnAssignPool()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public virtual void OnEnqueuePool()
+    {
+        gameObject.SetActive(false);
+        boundableProbe = null;
+    }
+
+    public virtual void OnDequeuePool()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public virtual void OnDeletePool()
+    {
+        //throw new System.NotImplementedException();
     }
 }

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NewInputSystem;
-using UnityEngine.InputSystem;
 
 public class InputController : MonoBehaviour
 {
@@ -10,7 +9,6 @@ public class InputController : MonoBehaviour
     public static InputController Instance => instance;
     private Inputs inputs;
     public Inputs Inputs => inputs;
-    public Vector2 mousePos;
     void Awake()
     {
         if (instance == null)
@@ -23,11 +21,6 @@ public class InputController : MonoBehaviour
         }
         inputs=new Inputs();
         inputs.Gameplay.Enable();
-    }
-
-    void Update()
-    {
-        mousePos=Mouse.current.position.ReadValue();
     }
 
 }

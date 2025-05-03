@@ -23,7 +23,8 @@ MonoBehaviour:
     SerializationNodes: []
   size: 3
   height: 1
+  canBlockTile: 1
   towerPrefab: {fileID: 0}
-  range: 0
+  range: 3
   level: 0
   effectAmount: 0

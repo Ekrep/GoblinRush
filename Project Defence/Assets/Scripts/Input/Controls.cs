@@ -55,6 +55,24 @@ namespace NewInputSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MouseDelta"",
+                    ""type"": ""Value"",
+                    ""id"": ""bf517bea-f8fa-4e85-89da-fa9505b23617"",
+                    ""expectedControlType"": ""Delta"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MouseLeftClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""fe6609f2-2309-4079-b309-23a4bbfb883e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -90,6 +108,28 @@ namespace NewInputSystem
                     ""action"": ""MouseScroll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9beb8835-7ea8-4a05-a0cd-a1793f2f656c"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseDelta"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1e9708ac-e342-4309-8b00-7cac3b9f9453"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseLeftClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -101,6 +141,8 @@ namespace NewInputSystem
             m_Gameplay_MouseLeftHold = m_Gameplay.FindAction("MouseLeftHold", throwIfNotFound: true);
             m_Gameplay_MouseRightHold = m_Gameplay.FindAction("MouseRightHold", throwIfNotFound: true);
             m_Gameplay_MouseScroll = m_Gameplay.FindAction("MouseScroll", throwIfNotFound: true);
+            m_Gameplay_MouseDelta = m_Gameplay.FindAction("MouseDelta", throwIfNotFound: true);
+            m_Gameplay_MouseLeftClick = m_Gameplay.FindAction("MouseLeftClick", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -165,6 +207,8 @@ namespace NewInputSystem
         private readonly InputAction m_Gameplay_MouseLeftHold;
         private readonly InputAction m_Gameplay_MouseRightHold;
         private readonly InputAction m_Gameplay_MouseScroll;
+        private readonly InputAction m_Gameplay_MouseDelta;
+        private readonly InputAction m_Gameplay_MouseLeftClick;
         public struct GameplayActions
         {
             private @Inputs m_Wrapper;
@@ -172,6 +216,8 @@ namespace NewInputSystem
             public InputAction @MouseLeftHold => m_Wrapper.m_Gameplay_MouseLeftHold;
             public InputAction @MouseRightHold => m_Wrapper.m_Gameplay_MouseRightHold;
             public InputAction @MouseScroll => m_Wrapper.m_Gameplay_MouseScroll;
+            public InputAction @MouseDelta => m_Wrapper.m_Gameplay_MouseDelta;
+            public InputAction @MouseLeftClick => m_Wrapper.m_Gameplay_MouseLeftClick;
             public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -190,6 +236,12 @@ namespace NewInputSystem
                 @MouseScroll.started += instance.OnMouseScroll;
                 @MouseScroll.performed += instance.OnMouseScroll;
                 @MouseScroll.canceled += instance.OnMouseScroll;
+                @MouseDelta.started += instance.OnMouseDelta;
+                @MouseDelta.performed += instance.OnMouseDelta;
+                @MouseDelta.canceled += instance.OnMouseDelta;
+                @MouseLeftClick.started += instance.OnMouseLeftClick;
+                @MouseLeftClick.performed += instance.OnMouseLeftClick;
+                @MouseLeftClick.canceled += instance.OnMouseLeftClick;
             }
 
             private void UnregisterCallbacks(IGameplayActions instance)
@@ -203,6 +255,12 @@ namespace NewInputSystem
                 @MouseScroll.started -= instance.OnMouseScroll;
                 @MouseScroll.performed -= instance.OnMouseScroll;
                 @MouseScroll.canceled -= instance.OnMouseScroll;
+                @MouseDelta.started -= instance.OnMouseDelta;
+                @MouseDelta.performed -= instance.OnMouseDelta;
+                @MouseDelta.canceled -= instance.OnMouseDelta;
+                @MouseLeftClick.started -= instance.OnMouseLeftClick;
+                @MouseLeftClick.performed -= instance.OnMouseLeftClick;
+                @MouseLeftClick.canceled -= instance.OnMouseLeftClick;
             }
 
             public void RemoveCallbacks(IGameplayActions instance)
@@ -225,6 +283,8 @@ namespace NewInputSystem
             void OnMouseLeftHold(InputAction.CallbackContext context);
             void OnMouseRightHold(InputAction.CallbackContext context);
             void OnMouseScroll(InputAction.CallbackContext context);
+            void OnMouseDelta(InputAction.CallbackContext context);
+            void OnMouseLeftClick(InputAction.CallbackContext context);
         }
     }
 }

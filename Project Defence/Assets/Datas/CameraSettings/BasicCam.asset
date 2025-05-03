@@ -25,7 +25,7 @@ MonoBehaviour:
   xRotationSpeed: 50
   yRotationSpeed: 50
   invert: 0
-  yRotationMinLimit: 20
+  yRotationMinLimit: 50
   yRotationMaxLimit: 50
   zoomSpeed: 0.01
   minZoomDistance: 9

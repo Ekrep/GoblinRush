@@ -6,6 +6,7 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(menuName = "Data/Boundables/Boundable")]
 public class BoundableData : SerializedScriptableObject
 {
+    public int health;
     public int size;
     public float height;
     public bool canBlockTile = true;

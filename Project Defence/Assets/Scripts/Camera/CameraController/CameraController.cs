@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Scriptables.MapCreation.MapData;
 using Scriptables.Settings.CameraSettings;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
@@ -13,15 +15,15 @@ public class CameraController : MonoBehaviour
     private float y = 0.0f;
     void OnEnable()
     {
-        GridMap.GridMapInitialized += GridMap_GridMapInitialized;
+        GridMap.OnGridMapInitialized += GridMap_GridMapInitialized;
     }
-    private void GridMap_GridMapInitialized(Transform mapParent)
+    private void GridMap_GridMapInitialized(Transform mapParent, MapData mapData)
     {
         target = mapParent;
     }
     void OnDisable()
     {
-        GridMap.GridMapInitialized -= GridMap_GridMapInitialized;
+        GridMap.OnGridMapInitialized -= GridMap_GridMapInitialized;
     }
 
     void Start()
@@ -36,13 +38,12 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (target)
+        if (target && !EventSystem.current.IsPointerOverGameObject())
         {
             if (InputController.Instance.Inputs.Gameplay.MouseRightHold.IsInProgress())
             {
-                x += Mouse.current.delta.ReadValue().normalized.x * camSettingsData.xRotationSpeed * 0.02f;
-                y -= Mouse.current.delta.ReadValue().normalized.y * camSettingsData.yRotationSpeed * 0.02f;
-
+                x += InputController.Instance.Inputs.Gameplay.MouseDelta.ReadValue<Vector2>().normalized.x * camSettingsData.xRotationSpeed * 0.02f;
+                y -= InputController.Instance.Inputs.Gameplay.MouseDelta.ReadValue<Vector2>().normalized.y * camSettingsData.yRotationSpeed * 0.02f;
                 y = ClampAngle(y, camSettingsData.yRotationMinLimit, camSettingsData.yRotationMaxLimit);
             }
 

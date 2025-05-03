@@ -29,6 +29,10 @@ namespace StaticHelpers.Random
             return randomFloats;
 
         }
+        public static float GetRandomValueWithUsingUnityRandom(float val1, float val2)
+        {
+            return UnityEngine.Random.Range(val1, val2);
+        }
     }
 
 

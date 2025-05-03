@@ -8,9 +8,9 @@ namespace StaticHelpers.Util
     {
         public enum GoblinType
         {
-            Troop,
-            SoftBreach,
-            HardBreach
+            Casual,
+            Breach
+
         }
         public enum PathStatus
         {
@@ -18,32 +18,29 @@ namespace StaticHelpers.Util
             Reachable
 
         }
+        [System.Serializable]
         public struct PathData
         {
-            private uint path_ID;
+            [SerializeField] private uint path_ID;
             public uint Path_ID => path_ID;
-            private GroundTile[] path;
-            public GroundTile[] Path => path;
-            private Dictionary<Vector2Int, GroundTile> pathTiles;
-            public Dictionary<Vector2Int, GroundTile> PathTiles => pathTiles;//bad choice
-            private PathStatus pathStatus;
+            [SerializeField] private Vector2Int[] path;
+            public Vector2Int[] Path => path;
+            [SerializeField] private bool isStartable;
+            public bool IsStartable => isStartable;
+            [SerializeField] private PathStatus pathStatus;
             public PathStatus PathStatus => pathStatus;
-            private Vector2Int pathStartGridPos;
+            [SerializeField] private Vector2Int pathStartGridPos;
             public Vector2Int PathStartGridPos => pathStartGridPos;
-            private Vector2Int pathEndGridPos;
+            [SerializeField] private Vector2Int pathEndGridPos;
             public Vector2Int PathEndGridPos => pathEndGridPos;
-            public PathData(uint path_ID, GroundTile[] path, Vector2Int pathStartGridPos, Vector2Int pathEndGridPos)
+            public PathData(uint path_ID, Vector2Int[] path, Vector2Int pathStartGridPos, Vector2Int pathEndGridPos, bool isStartable)
             {
                 this.path_ID = path_ID;
                 this.path = path;
-                pathTiles = new Dictionary<Vector2Int, GroundTile>(path.Length);
-                for (int i = 0; i < path.Length; i++)
-                {
-                    pathTiles.TryAdd(path[i].GridPosition, path[i]);
-                }
                 this.pathEndGridPos = pathEndGridPos;
                 this.pathStartGridPos = pathStartGridPos;
-                if (path[path.Length - 1].GridPosition == pathEndGridPos)
+                this.isStartable = isStartable;
+                if (path != null && path.Length > 0 && Vector2Int.Distance(path[path.Length - 1], pathEndGridPos) < 3f)
                 {
                     pathStatus = PathStatus.Reachable;
                 }

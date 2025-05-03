@@ -25,7 +25,8 @@ namespace StaticHelpers.MapCreationUtils.MeshCombiner
             }
 
             Mesh mesh = new Mesh();
-            mesh.CombineMeshes(combine);
+            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            mesh.CombineMeshes(combine, true);
             targetMesh.mesh = mesh;
             SaveMesh(targetMesh.sharedMesh, gameObject.name, false, true);
         }

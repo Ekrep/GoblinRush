@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using static StaticHelpers.MapCreationUtils.MapCreationUtils;
 using UnityEditor;
 using static StaticHelpers.Util.Utils;
+using StaticHelpers.PathFinder;
 
 namespace Scriptables.MapCreation.MapData
 {
@@ -18,15 +19,19 @@ namespace Scriptables.MapCreation.MapData
         public Vector2Int minBounds;
         public Vector2Int maxBounds;
         public Vector2Int[] possiblePathStartPoints;
-        public Vector2Int[] nexusClosestNeighborTiles;
+        public Vector2Int nexusCenter;
 
         [Header("Tile Values")]
         public PlacedTileData[] placedTiles;
 
         [Header("Boundable Object Values")]
         public BoundedBoundableData[] boundedBoundableDatas;
+        [Header("Path Data")]
+        public PathData[] pathDatas;
+        [Header("Currency")]
+        public int levelStartMoney;
 
-        public void Save(PlacedTileData[] placedTiles, float cellXOffset, float cellZOffset, Vector3 tileScale, BoundedBoundableData[] boundables, Vector2Int minBounds, Vector2Int maxBounds, Vector2Int[] possiblePathStartPoints)
+        public void Save(PlacedTileData[] placedTiles, float cellXOffset, float cellZOffset, Vector3 tileScale, BoundedBoundableData[] boundables, Vector2Int minBounds, Vector2Int maxBounds, Vector2Int[] possiblePathStartPoints, Vector2Int nexusCenter, PathData[] pathDatas)
         {
             this.placedTiles = placedTiles;
             this.cellXOffset = cellXOffset;
@@ -36,18 +41,11 @@ namespace Scriptables.MapCreation.MapData
             this.maxBounds = maxBounds;
             this.possiblePathStartPoints = possiblePathStartPoints;
             boundedBoundableDatas = boundables;
+            this.nexusCenter = nexusCenter;
+            this.pathDatas = pathDatas;
             EditorUtility.SetDirty(this);
             AssetDatabase.SaveAssetIfDirty(this);
         }
-        private void InitializePaths()
-        {
-            PathData[] availablePaths = new PathData[possiblePathStartPoints.Length];
 
-        }
-        // private Vector2Int GetClosestPathStartPointToNexus(Vector2Int pathStartPoint, Vector2Int[] nexusClosestNeighbors)
-        // {
-
-
-        // }
     }
 }

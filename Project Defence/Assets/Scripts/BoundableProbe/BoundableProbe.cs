@@ -1,19 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using PoolSystem.Poolable;
 using UnityEngine;
 
 [System.Serializable]
-public abstract class BoundableProbe : MonoBehaviour
+public abstract class BoundableProbe : MonoBehaviour, IPoolable
 {
-    public BoundableData boundableData;
+    [SerializeField] protected BoundableData boundableData;
+    public BoundableData BoundableData => boundableData;
     public MeshFilter meshFilter;
     public Vector2Int probePivotPoint;
     public List<GroundTile> boundedTiles;
 
+    #region StatValues
+    protected int boundableHealth;
+    public int BoundableHealth => boundableHealth;
+    #endregion
+
     public abstract void OnUnbound();
-    public virtual void Initialize(Vector2Int[] occupiedTilePositions)
+    public virtual void Initialize(Vector2Int[] occupiedTilePositions, Vector2Int boundablePivotPoint)
     {
+        boundedTiles = new List<GroundTile>(occupiedTilePositions.Length);
         OccupyTile(occupiedTilePositions);
+        probePivotPoint = boundablePivotPoint;
+        boundableHealth = boundableData.health;
     }
     public void OccupyTile(Vector2Int tilePos)
     {
@@ -37,5 +47,38 @@ public abstract class BoundableProbe : MonoBehaviour
     public void SetScale(Vector3 scale)
     {
         transform.localScale = scale;
+    }
+    protected virtual void SubscribeEvents()
+    {
+    }
+    protected virtual void UnSubscribeEvents()
+    {
+    }
+
+    public virtual void OnCreatedForPool()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public virtual void OnAssignPool()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public virtual void OnEnqueuePool()
+    {
+        gameObject.SetActive(false);
+        boundedTiles = null;
+
+    }
+
+    public virtual void OnDequeuePool()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public virtual void OnDeletePool()
+    {
+        gameObject.SetActive(false);
     }
 }

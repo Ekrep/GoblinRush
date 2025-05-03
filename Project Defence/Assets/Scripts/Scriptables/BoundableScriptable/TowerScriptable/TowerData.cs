@@ -7,7 +7,6 @@ namespace Scriptables.Towers
 {
     public class TowerData : BoundableData
     {
-        public GameObject towerPrefab;
         public int range;
         public int level;
     }

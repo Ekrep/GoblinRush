@@ -7,7 +7,7 @@ namespace Scriptables.Towers.AttackTower
     [CreateAssetMenu(menuName = "Data/TowerData/AttackTowerData")]
     public class AttackTowerData : TowerData
     {
-        public float rateOfFire;
+        public float cooldown;
         public int attackDamage;
     }
 }
